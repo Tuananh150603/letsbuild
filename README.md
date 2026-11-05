@@ -1,0 +1,112 @@
+# LetsBuild — Muse-team framework (v1, file-based)
+> **Trạng thái:** đang thử nghiệm và xây dựng — khung v1 đã chạy thử vòng đời task đầy đủ, đang chuẩn bị đưa agent vào thử việc.
+
+Hệ nhiều Muse cùng làm việc: 1 quản lý (Muse) + 10 Muse nhân viên
+(tài khoản riêng, máy riêng, đội agent riêng).
+
+## Kiến trúc — phân tán, không dồn về 1 máy
+
+- **Board trung tâm chỉ giữ metadata task** (file task, trạng thái, claim).
+  Không có compute nào chạy dồn về máy quản lý — máy quản lý sẽ sập.
+- **Mỗi Muse chạy trên máy riêng** của nó, dùng tool riêng của nó.
+- **Output đưa lên kho chung** (folder này, copy lên Drive/Git để
+  cả 11 tài khoản cùng đọc/ghi được).
+- **Không có kênh chat trực tiếp** giữa các tài khoản Muse riêng.
+  Giao tiếp = bất đồng bộ qua file trong kho chung. Việc gấp thì
+  Han relay tay, nhưng hệ thống không dựa vào đó. Mọi trao đổi tuân
+  theo `docs/protocol.md` (định nghĩa từ đầu, không đổi khi đổi
+  transport).
+
+## Vai trò
+
+- **Quản lý (Muse):** tạo task, chia theo khâu pipeline, giao việc,
+  QA output từng task, ráp + chốt cuối. Giữ chất lượng tổng.
+- **Nhân viên (10 Muse kia):** nhận task, thực thi, nộp output +
+  báo cáo. Không tự đổi phạm vi task, không sửa task của người khác.
+
+## Vòng đời task
+
+```
+queue (mở) → doing (đã nhận) → done (đã nộp) → QA → archive (duyệt)
+                                              ↘ rework → queue (làm lại)
+```
+
+1. Quản lý tạo task file trong `board/queue/` theo mẫu
+   `tasks/task-template.md`.
+2. Nhân viên nhận task: tạo file claim `board/doing/<ID>.claim.json`
+   (ghi tên mình + thời gian UTC). Claim đầu tiên thắng; nếu 2 claim
+   cùng task thì quản lý quyết định theo timestamp sớm nhất.
+3. Nhân viên làm theo spec + tiêu chí nghiệm thu trong task file,
+   ghi output vào `outputs/<ID>/` kèm `report.md` (làm gì, nguồn nào,
+   caveat gì), rồi chuyển task file sang `board/done/`.
+4. Quản lý QA: duyệt → chuyển sang `board/archive/`;
+   cần sửa → ghi note QA vào task file, chuyển về `board/queue/`.
+5. Claim quá 24h không có động tĩnh: quản lý được quyền trả task
+   về queue để giao lại.
+
+## Loại task
+
+- **Nhân viên làm được:** nghiên cứu, fact-check, viết script,
+  viết prompt ảnh (Han tự gen ảnh từ prompt), kiểm tra QA theo
+  checklist.
+- **Voice + draft CapCut:** quản lý CUNG CẤP tool cho nhân viên
+  (xem `docs/worker-toolkit-setup.md`) để nhân viên tự chạy trên
+  máy riêng — KHÔNG host tập trung trên máy quản lý. Nhân viên
+  nào chưa cài + verify toolkit xong thì chưa nhận 2 loại task
+  này; trước đó quản lý vẫn làm.
+- **QA cuối + quyết định đăng:** luôn là của quản lý, không giao.
+
+## Cấu trúc folder
+
+```
+letsbuild/
+  README.md                  (file này)
+  board/queue/               task đang mở
+  board/doing/               claim file của task đang làm
+  board/done/                task đã nộp, chờ QA
+  board/archive/             task đã duyệt xong
+  tasks/task-template.md     mẫu task
+  tasks/examples/T-000-example.md   task mẫu đã điền
+  outputs/<ID>/              output của từng task (nhân viên ghi)
+  docs/worker-onboarding.md  hướng dẫn dán cho Muse nhân viên
+  docs/manager-guide.md      quy trình vận hành của quản lý
+  docs/setup-for-han.md      các bước Han làm ngày mai
+  tools/board.py             CLI của quản lý (new/list/approve/rework)
+```
+
+## Phạm vi v1 và phase 2
+
+- **v1 (bộ khung này):** file-based. Đủ để ngày mai thêm nhân viên
+  và chạy task thật. Không cần server, không cần mạng riêng.
+- **Phase 2 (sau này, nếu cần):** server API + message queue trên
+  mạng riêng (Tailscale) để tin nhắn giữa các Muse đạt mili-giây.
+  Lưu ý: tin nhắn nhanh không làm task nhanh — tốc độ thật đến từ
+  làm song song, không phải từ tin nhắn. Đừng xây phase 2 chỉ vì
+  muốn "nhanh hơn chat".
+
+## Luật chung mọi nhân viên phải theo
+
+- Sản xuất bằng tiếng Anh. Script tiếng Việt chỉ để đọc duyệt.
+- Không bịa fact, số liệu, tên người, tên nghiên cứu. Mọi khẳng
+  định phải có nguồn, ghi rõ nguồn trong report.
+- Style hình: flat mid-century modern (navy #0F2A43, kem #F5EEDD,
+  gold #E3A008, đỏ #C0392B, slate #5A6C7D), không đổ bóng/gradient.
+- Không tái dùng element giống nhau qua các video.
+- Ngách tâm lý: chỉ giải thích, không chẩn đoán/kê đơn, gắn
+  disclaimer "educational only".
+- Không mở bài/mở đoạn bằng câu hỏi tu từ. Kết bằng hình ảnh,
+  không giảng đạo.
+
+## Bài học từ framework khác (đã áp dụng vào khung)
+
+Chi tiết đầy đủ: `docs/lessons-from-frameworks.md` (CrewAI, Swarms,
+smolagents, Paperclip — chỉ lấy pattern, không bê code).
+
+- Mỗi nhân viên có 1 role chính; quản lý giao task đúng role.
+- Task mang theo "mục tiêu lớn (why)", không chỉ title.
+- Claim file là lock chống tranh task (1 assignee).
+- Tối đa 2 lần rework/task; board.py cảnh báo khi rework lần 3,
+  và ghi log approve/rework theo worker vào `board/worker-log.md`
+  để đo tỷ lệ rework = tín hiệu training.
+- Report mở đầu bằng kết quả; quản lý review output cuối, không
+  soi nháp giữa chừng; nhân viên không giao lại task ngang.
