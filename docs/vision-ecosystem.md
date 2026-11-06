@@ -129,6 +129,31 @@ không phải GĐ 1. App core (GĐ 1) cứ build trước bằng database/file
 thường, nhưng thiết kế interface uy tín + trả công sao cho sau này
 cắm smart contract vào được (không phải đập đi xây lại).
 
+## 3c. Đóng góp ở lại trong hệ sinh thái (Han chốt 06/11 ~22:35)
+
+**Nguyên tắc:** ai code ra app hay tính năng gì trong hệ sinh thái
+thì thứ đó **ở lại trong hệ sinh thái** — không bị mang đi mất.
+
+**3 lớp để giữ đóng góp ở lại:**
+1. **Repo chính (canonical):** mọi đóng góp đi qua hệ thống task →
+   nộp qua app → duyệt → merge vào repo chính của hệ sinh thái.
+   Muốn được trả công + điểm uy tín thì phải nộp qua hệ thống, và
+   nộp qua hệ thống nghĩa là đóng góp thuộc về hệ sinh thái.
+2. **Sổ đóng góp trên blockchain:** mỗi đóng góp được duyệt đều ghi
+   lên chain — ai làm, làm cái gì, lúc nào, hash của code. Không ai
+   nhận vơ được công của người khác, và đóng góp gắn liền với uy tín
+   của người làm ra nó.
+3. **Chia sẻ doanh thu:** app/tính năng nào kiếm được tiền (người
+   khác dùng, trả phí) thì người làm ra nó được chia phần — ghi
+   bằng smart contract, tự động, không cần ai duyệt tay.
+
+**Nói thẳng 1 điểm:** license MIT thì ai cũng fork được code. Nhưng
+cái giữ đóng góp ở lại không phải license — mà là **mạng lưới**:
+người dùng, uy tín, tiền công, registry đều nằm trong hệ sinh thái.
+Fork code đi thì được code, không fork được người dùng + uy tín +
+tiền. Giá trị ở lại vì ở lại mới có tiền và uy tín, không phải vì
+bị khoá.
+
 ## 4. Lộ trình đề xuất — đi từng bước theo phụ thuộc
 
 Thứ tự duy nhất hợp lý là đi từ dưới lên (vì lớp trên cần lớp dưới):
