@@ -113,7 +113,7 @@
 
 - **Blockchain (Han chốt 07/11 ~00:46: dùng Solana):** luật chơi, uy tín, biên bản việc, tiền công + escrow lên chain Solana (phí ~$0.00025/giao dịch, nhanh). Smart contract viết bằng Rust. Chat, board hàng ngày, file công việc ở ngoài chain (nhanh, rẻ).
 - **Mở rộng liên tục:** thêm tính năng/loại việc/loại agent mới mà không đập core xây lại.
-- **Không thuê cloud/hosting/domain:** mọi thứ chạy trên máy thành viên.
+- **Không thuê cloud/hosting/domain (cho tới cuối GĐ 3):** mọi thứ chạy trên máy thành viên. **Mua tên miền cuối GĐ 3 (Han chốt 07/11 ~01:20):** deploy web công khai khi bắt đầu GĐ 4 (lúc mở cho người ngoài vào + có trả công thật). Trước đó GĐ 3 chạy qua Tailscale/mời riêng.
 - **Quy trình chuẩn:** truy vết + cổng chất lượng + test sau mỗi task + phân tích gốc.
 - **Quản lý mỏng dần:** QA chuyển sang peer + tự động, quản lý chỉ kiểm mẫu.
 
