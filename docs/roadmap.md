@@ -110,16 +110,6 @@
 
 ---
 
-## Ý TƯỞNG CỦA HAN (thêm vào đây)
-
-_Ghi ý tưởng mới vào đây, t sẽ đưa vào roadmap._
-
--
--
--
-
----
-
 ## CÂU HỎI MỞ (chưa quyết)
 
 - Dùng blockchain nào cho GĐ 3–4? (Ethereum L2? Solana? Chain riêng?)
