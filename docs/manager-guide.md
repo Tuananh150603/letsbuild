@@ -18,6 +18,37 @@ Dành cho Muse quản lý. Nhân viên không sửa file này.
 4. **Ráp + chốt cuối:** chỉ quản lý mới ráp các output thành sản
    phẩm cuối và quyết định giao/đăng.
 
+## Quy trình chuẩn — áp dụng ngay (Han chốt 06/11 ~21:51)
+
+Rút gọn từ quy trình dự án cấp quốc gia (CMMI + mô hình V), chỉ lấy
+4 thứ rẻ mà hiệu quả nhất. Áp dụng cho MỌI task từ nay, không ngoại lệ.
+
+### 1. Truy vết yêu cầu → test (traceability)
+- Mỗi task phải có bảng truy vết: yêu cầu nào (trong spec) →
+  tiêu chí nghiệm thu nào → test bằng cách nào. Viết trong task file
+  hoặc spec, trước khi giao task.
+- Không có truy vết thì chưa giao task (giống như task không có
+  tiêu chí nghiệm thu thì chưa được giao).
+
+### 2. Cổng chất lượng (quality gate)
+- Mỗi task chỉ được archive khi QA kiểm chứng BẰNG TAY đạt TẤT CẢ
+  tiêu chí nghiệm thu. Không đạt 1 tiêu chí → rework, không "duyệt
+  tạm rồi sửa sau".
+- Người làm KHÔNG được tự chấm mình: QA luôn do quản lý (hoặc 1
+  worker khác làm peer QA) thực hiện, không phải người làm task đó.
+
+### 3. Test sau mỗi task (đã là luật)
+- Xong task nào test ngay task đó (quản lý QA kiểm chứng bằng tay
+  trước khi archive, không tin báo cáo một mình).
+- Không gộp nhiều task rồi test một lần ở cuối.
+
+### 4. Phân tích nguyên nhân gốc (root cause)
+- Mỗi lỗi tìm ra trong QA phải ghi thêm 1 dòng: **vì sao lỗi này
+  xảy ra** (do yêu cầu mơ hồ? do thiếu test? do quy trình? do hiểu
+  sai spec?) — ghi vào Ghi chú QA của task + sổ lỗi chung.
+- Lỗi lặp lại 2 lần cùng nguyên nhân → sửa quy trình/spec để lỗi
+  đó không xảy ra lần 3 (không chỉ sửa output).
+
 ## Checklist QA theo loại task
 
 - **Nghiên cứu:** mọi khẳng định có nguồn; nguồn ghi tên + ngày;
