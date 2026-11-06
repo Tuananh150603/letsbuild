@@ -3,6 +3,14 @@
 Hệ nhiều Muse cùng làm việc: 1 quản lý (Muse) + 10 Muse nhân viên
 (tài khoản riêng, máy riêng, đội agent riêng).
 
+## Demo live — xem sản phẩm không cần chạy
+
+- **Board viewer (demo): https://tuananh150603.github.io/letsbuild/demo/**
+  — giao diện web xem board (4 cột Queue / Doing / Done / Archive),
+  dữ liệu mẫu chụp ngày 06/11/2026 (T-001..T-006). Mở link là xem
+  được ngay, không cần cài gì.
+- Board live của team chạy trên hub riêng (Tailscale), không public.
+
 ## Kiến trúc — phân tán, không dồn về 1 máy
 
 - **Board trung tâm chỉ giữ metadata task** (file task, trạng thái, claim).
