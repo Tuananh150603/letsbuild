@@ -26,8 +26,11 @@ host machine.
 Usage:
     python3 server.py [--host 0.0.0.0] [--port 8899] [--data-dir ./hub-data]
 
-Endpoints (all JSON; all except /health need Authorization: Bearer <token>):
+Endpoints (all JSON; all except /health and / need Authorization: Bearer <token>):
     GET  /health                          -> {"ok": true}
+    GET  /                                -> read-only viewer (HTML, no auth:
+                                              host-only page so Han can watch
+                                              the team chat; auto-refreshes)
     GET  /rooms                           -> {"rooms": [...]}
     POST /rooms/<room>/messages           {"text": "..."} -> the message
     GET  /rooms/<room>/messages?since=<id>&limit=<n>
@@ -178,6 +181,26 @@ class Store:
                 seen.add(msg.get("room"))
         return sorted(r for r in seen if r)
 
+    def read_all(self, limit_per_room=200):
+        """All messages grouped by room (for the viewer page)."""
+        out = {}
+        if not os.path.exists(self.messages_path):
+            return out
+        with open(self.messages_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    msg = json.loads(line)
+                except ValueError:
+                    continue
+                room = msg.get("room")
+                if not room:
+                    continue
+                out.setdefault(room, []).append(msg)
+        return {r: msgs[-limit_per_room:] for r, msgs in sorted(out.items())}
+
 
 class Handler(BaseHTTPRequestHandler):
     store = None  # set in main()
@@ -193,6 +216,52 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def _send_html(self, status, html_str):
+        body = html_str.encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _viewer(self):
+        """Read-only chat viewer (no auth): the host watches the team
+        talk. Rendered server-side from messages.jsonl, so no token
+        is needed. Auto-refreshes every 15 s."""
+        import html as html_mod
+
+        grouped = self.store.read_all()
+        parts = [
+            "<!doctype html><html lang=\"vi\"><head><meta charset=\"utf-8\">"
+            "<meta http-equiv=\"refresh\" content=\"15\">"
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+            "<title>LetsBuild Hub — xem chat</title>"
+            "<style>body{font-family:system-ui,sans-serif;max-width:760px;"
+            "margin:0 auto;padding:16px;color:#1a1a1a;background:#fafafa}"
+            "h1{font-size:20px}h2{font-size:16px;margin-top:28px;"
+            "border-bottom:1px solid #ddd;padding-bottom:4px}"
+            ".msg{margin:8px 0}.ts{color:#888;font-size:12px}"
+            ".from{font-weight:700}.note{color:#666;font-size:13px}"
+            "</style></head><body>",
+            "<h1>LetsBuild Hub — xem chat</h1>",
+            "<p class=\"note\">Chỉ xem (không gửi được từ đây). Tự làm mới "
+            "mỗi 15 giây. Chat vẫn đi qua hub, task vẫn qua board.</p>",
+        ]
+        if not grouped:
+            parts.append("<p>Chưa có tin nhắn nào.</p>")
+        for room, msgs in grouped.items():
+            parts.append(f"<h2>#{html_mod.escape(room)}</h2>")
+            for m in msgs:
+                ts = html_mod.escape(str(m.get("ts", "")))
+                who = html_mod.escape(str(m.get("from", "?")))
+                text = html_mod.escape(str(m.get("text", ""))).replace("\n", "<br>")
+                parts.append(
+                    f"<div class=\"msg\"><span class=\"ts\">{ts}</span> "
+                    f"<span class=\"from\">{who}</span>: {text}</div>"
+                )
+        parts.append("</body></html>")
+        return self._send_html(200, "".join(parts))
 
     def _auth(self):
         auth = self.headers.get("Authorization", "")
@@ -230,6 +299,8 @@ class Handler(BaseHTTPRequestHandler):
         path = self.path.split("?", 1)[0]
         if path == "/health":
             return self._send(200, {"ok": True})
+        if path == "/":
+            return self._viewer()
         if path == "/admin/tokens":
             if not self._admin_auth():
                 return self._send(401, {"error": "unauthorized"})
