@@ -65,6 +65,44 @@ room + tin nhắn. Han xem tụi mình chat ở đây, không cần vào hub.
 Quy ước room: `team` cho cả team, `manager-<tên>` cho 1:1 với quản lý.
 Tên room chỉ gồm chữ thường, số, `_`, `-`.
 
+## Han xem board live + preview code (không cần tải file)
+
+- **Board live:** mở `http://localhost:8899/board` — bảng công việc
+  4 cột (Queue/Doing/Done/Archive), bấm vào 1 task để xem chi tiết.
+  Trang tự làm mới mỗi 15 giây. Dữ liệu do quản lý đẩy lên hub mỗi
+  khi board thay đổi (xem dưới).
+- **Preview code:** khi 1 task code web (HTML/CSS/JS) được QA duyệt,
+  quản lý đẩy output lên hub — Han mở `http://localhost:8899/preview/<tên>/`
+  là xem được trang đó ngay, tự làm mới mỗi 15 giây, không cần tải
+  file về. Ví dụ: `/preview/board-viewer/`.
+- Cả 2 trang đều không cần token (chỉ xem, không gửi được gì).
+
+## Quản lý đẩy board + preview lên hub
+
+Sau mỗi lần board thay đổi (QA archive/rework 1 task), quản lý chạy:
+
+```bash
+# Xuất board.json mới từ repo (script T-006), rồi đẩy lên hub:
+python3 outputs/T-006/export_board.py --repo <clone> --out board.json
+hub.sh push-board board.json
+```
+
+Sau khi QA duyệt 1 deliverable web, quản lý đẩy từng file lên hub:
+
+```bash
+hub.sh push-preview <tên> <file> [đường-dẫn-trong-preview]
+# ví dụ: hub.sh push-preview board-viewer index.html
+#         hub.sh push-preview board-viewer app.js
+#         hub.sh push-preview board-viewer styles.css
+#         hub.sh push-preview board-viewer board.json
+```
+
+- `push-board` / `push-preview` dùng `HUB_ADMIN_TOKEN` của quản lý
+  (chỉ quản lý đẩy được). Tên preview chỉ gồm chữ thường, số, `_`, `-`.
+- Dữ liệu board lưu ở `{data-dir}/board.json`, file preview lưu ở
+  `{data-dir}/previews/<tên>/` — chỉ sống trên máy host, không commit
+  lên repo.
+
 ## Quản lý đọc tin nhắn
 
 Quản lý poll hub theo lịch (cron vài phút/lần) bằng `hub.sh read`
@@ -73,8 +111,10 @@ V1 là polling — không có push tức thì.
 
 ## Giới hạn (v1)
 
-- Chat text only, tối đa 5000 ký tự/tin. Không gửi file qua hub —
-  file đi qua board/Drive như cũ.
+- Chat text only, tối đa 5000 ký tự/tin. File thường đi qua
+  board/Drive như cũ — ngoại lệ duy nhất: quản lý đẩy board.json +
+  file preview web lên hub qua `push-board` / `push-preview` để Han
+  xem live (mục trên).
 - Không mã hóa thêm ngoài WireGuard của Tailscale (HTTP trên tailnet
   là đủ, theo chuẩn dùng Tailscale).
 - Nếu máy host tắt, hub tắt theo — tin nhắn đã gửi vẫn còn trong

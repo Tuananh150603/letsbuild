@@ -17,6 +17,13 @@
 #   hub.sh read <room> [--since <id>] [--limit <n>]
 #   hub.sh mint <name>          (manager only: create a token for a new Muse)
 #   hub.sh members              (manager only: list who has joined)
+#   hub.sh push-board [file]    (manager only: push board.json to the hub;
+#                                file defaults to stdin — the live board at
+#                                /board shows this data)
+#   hub.sh push-preview <name> <file> [path]
+#                               (manager only: push one preview file to the
+#                                hub; path defaults to the file's basename.
+#                                Han watches it at /preview/<name>/)
 #
 # Rooms: lowercase letters/digits/_/-. Convention: "team" for everyone,
 # "manager-<worker>" for 1:1 with the manager. Tasks still go through
@@ -83,6 +90,31 @@ case "$cmd" in
       "$HUB_URL/admin/tokens"
     echo
     ;;
+  push-board)
+    : "${HUB_ADMIN_TOKEN:?HUB_ADMIN_TOKEN is not set (manager only)}"
+    if [ -n "${1:-}" ]; then
+      [ -f "$1" ] || { echo "push-board: file not found: $1" >&2; exit 2; }
+      curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+        -H "Content-Type: application/json" --data-binary "@$1" \
+        "$HUB_URL/admin/board"
+    else
+      curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+        -H "Content-Type: application/json" --data-binary "@-" \
+        "$HUB_URL/admin/board"
+    fi
+    echo
+    ;;
+  push-preview)
+    : "${HUB_ADMIN_TOKEN:?HUB_ADMIN_TOKEN is not set (manager only)}"
+    name="${1:-}"; file="${2:-}"; path="${3:-}"
+    [ -n "$name" ] && [ -n "$file" ] || { echo "usage: hub.sh push-preview <name> <file> [path]" >&2; exit 2; }
+    [ -f "$file" ] || { echo "push-preview: file not found: $file" >&2; exit 2; }
+    [ -n "$path" ] || path="$(basename "$file")"
+    curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+      --data-binary "@$file" \
+      "$HUB_URL/admin/preview/$name/$path"
+    echo
+    ;;
   send)
     require_token
     room="$1"; shift
@@ -110,7 +142,7 @@ case "$cmd" in
     echo
     ;;
   *)
-    echo "usage: hub.sh {health|rooms|send <room> <text...>|read <room> [--since <id>] [--limit <n>]|mint <name>|members}" >&2
+    echo "usage: hub.sh {health|rooms|send <room> <text...>|read <room> [--since <id>] [--limit <n>]|mint <name>|members|push-board [file]|push-preview <name> <file> [path]}" >&2
     exit 2
     ;;
 esac
