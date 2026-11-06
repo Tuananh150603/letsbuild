@@ -154,6 +154,36 @@ Fork code đi thì được code, không fork được người dùng + uy tín 
 tiền. Giá trị ở lại vì ở lại mới có tiền và uy tín, không phải vì
 bị khoá.
 
+## 3d. Mô hình thu tiền nền tảng (Han chốt 06/11 ~22:43)
+
+**Nguyên tắc:** nền tảng cung cấp hạ tầng (app, lớp tin cậy,
+đường trả tiền, người dùng) thì thu phí trên hoạt động kinh tế
+chạy trên đó — team khác build mô hình kiếm tiền riêng từ hệ
+sinh thái thì nền tảng cũng được lợi.
+
+**3 nguồn tiền:**
+1. **Phí giao dịch (nguồn chính):** mỗi lần tiền chạy trong hệ sinh
+   thái (trả công task, escrow giải ngân, mua skill/app), smart
+   contract tự trừ 2–5% về ví nền tảng. Càng nhiều giao dịch thì
+   càng thu nhiều, không cần làm gì thêm.
+   - Lưu ý: phí gas blockchain trả cho validator/miner, tách riêng
+     với phí nền tảng. Phí nền tảng ghi riêng trong smart contract
+     (vd: trả công 100 thì 95 về agent, 5 về nền tảng).
+2. **Phí sàn (marketplace):** team bán app/skill/tính năng trên chợ
+   của hệ sinh thái thì nền tảng lấy hoa hồng 10–15%.
+3. **Phí đăng ký/listing (phụ):** team trả phí nhỏ để đăng app lên
+   chợ, hoặc gói premium. Chỉ thu khi đã đông người dùng.
+
+**Nguyên tắc giữ team ở lại:** phí đủ thấp để team vẫn lãi nhiều
+hơn khi ở trong hệ sinh thái so với tự làm ngoài (giao dịch 2–5%,
+sàn 10–15%). Thu cao quá thì team bỏ đi, thu thấp quá thì nền tảng
+không nuôi nổi mình.
+
+**Thứ tự:** tiền này chỉ có khi đã có giao dịch thật (GĐ 4–5).
+GĐ 1–3 chưa có tiền chạy thì chưa thu được gì — đừng thiết kế phí
+trước, cứ xây hệ sinh thái có người dùng + giao dịch thật đã, phí
+là phần gắn vào sau bằng smart contract.
+
 ## 4. Lộ trình đề xuất — đi từng bước theo phụ thuộc
 
 Thứ tự duy nhất hợp lý là đi từ dưới lên (vì lớp trên cần lớp dưới):

@@ -80,6 +80,7 @@
 - Làm đạt (qua kiểm chứng) → tiền về agent. Làm không đạt → tiền hoàn lại chủ việc.
 - **Blockchain (smart contract):** luật trả công + escrow chạy bằng smart contract — bất biến, không ai đổi được một mình.
 - Đổi luật phải qua bỏ phiếu quản trị (DAO) — agent uy tín cao + chủ việc cùng bỏ phiếu, đủ đa số mới đổi.
+- **Mô hình thu tiền nền tảng (Han chốt 06/11 ~22:43):** nền tảng thu phí trên hoạt động kinh tế chạy trên đó — (1) phí giao dịch 2–5% mỗi lần tiền chạy (trả công, escrow, mua skill/app), smart contract tự trừ về ví nền tảng; (2) phí sàn marketplace 10–15% khi team bán app/skill; (3) phí đăng ký/listing (phụ, chỉ thu khi đã đông người dùng). Phí gas blockchain trả cho validator, tách riêng với phí nền tảng. Nguyên tắc: phí đủ thấp để team vẫn lãi hơn khi ở trong hệ sinh thái so với tự làm ngoài.
 
 **Khó nhất:** Tiền thật + pháp lý + gian lận. Chỉ làm sau khi GĐ 3 đo được chất lượng.
 
