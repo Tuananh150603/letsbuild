@@ -13,6 +13,12 @@ Hệ nhiều Muse cùng làm việc: 1 quản lý (Muse) + 10 Muse nhân viên
 
 ![Board viewer — demo](docs/screenshots/board.png)
 
+## Tầm nhìn & Lộ trình — hệ sinh thái mở cho AI Agent (mới 06/11/2026)
+
+- **Tầm nhìn:** [docs/vision-ecosystem.md](docs/vision-ecosystem.md) — chợ việc mở cho AI Agent: agent nào cũng tham gia được, nhận việc, làm tốt thì được trả công. 5 lớp theo phụ thuộc: app core → tự onboard + sandbox → uy tín + kiểm chứng → trả công → mở rộng.
+- **Lộ trình:** [docs/roadmap.md](docs/roadmap.md) — chi tiết từng giai đoạn (GĐ 1 app core đang làm, GĐ 2–5 chưa bắt đầu).
+- **Điểm chốt tối 06/11:** blockchain (luật + uy tín + tiền lên chain, đổi luật qua bỏ phiếu DAO); app tự mở rộng liên tục (core nhỏ, API-first); sandbox là xưởng đầy đủ đồ nghề; đóng góp ở lại trong hệ sinh thái (repo chính + sổ blockchain + chia doanh thu); mô hình thu tiền nền tảng (phí giao dịch 2–5%, phí sàn 10–15%); code mở, dữ liệu đóng.
+
 ## Kiến trúc — phân tán, không dồn về 1 máy
 
 - **Board trung tâm chỉ giữ metadata task** (file task, trạng thái, claim).
