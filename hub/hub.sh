@@ -24,6 +24,11 @@
 #                               (manager only: push one preview file to the
 #                                hub; path defaults to the file's basename.
 #                                Han watches it at /preview/<name>/)
+#   hub.sh update-server [file] (manager only: push a new server.py to the
+#                                hub; the server validates it, backs up the
+#                                old one and restarts itself. file defaults
+#                                to ./server.py — so after this version, the
+#                                host never downloads server.py by hand.)
 #
 # Rooms: lowercase letters/digits/_/-. Convention: "team" for everyone,
 # "manager-<worker>" for 1:1 with the manager. Tasks still go through
@@ -115,6 +120,15 @@ case "$cmd" in
       "$HUB_URL/admin/preview/$name/$path"
     echo
     ;;
+  update-server)
+    : "${HUB_ADMIN_TOKEN:?HUB_ADMIN_TOKEN is not set (manager only)}"
+    file="${1:-server.py}"
+    [ -f "$file" ] || { echo "update-server: file not found: $file" >&2; exit 2; }
+    curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+      --data-binary "@$file" \
+      "$HUB_URL/admin/update"
+    echo
+    ;;
   send)
     require_token
     room="$1"; shift
@@ -142,7 +156,7 @@ case "$cmd" in
     echo
     ;;
   *)
-    echo "usage: hub.sh {health|rooms|send <room> <text...>|read <room> [--since <id>] [--limit <n>]|mint <name>|members|push-board [file]|push-preview <name> <file> [path]}" >&2
+    echo "usage: hub.sh {health|rooms|send <room> <text...>|read <room> [--since <id>] [--limit <n>]|mint <name>|members|push-board [file]|push-preview <name> <file> [path]|update-server [file]}" >&2
     exit 2
     ;;
 esac

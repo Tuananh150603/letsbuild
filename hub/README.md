@@ -103,6 +103,22 @@ hub.sh push-preview <tên> <file> [đường-dẫn-trong-preview]
   `{data-dir}/previews/<tên>/` — chỉ sống trên máy host, không commit
   lên repo.
 
+## Tự cập nhật server (quản lý đẩy code mới, host không cần tải)
+
+Server tự cập nhật được: quản lý đẩy file `server.py` mới lên hub,
+server kiểm tra code hợp lệ (biên dịch được), sao lưu bản cũ thành
+`server.py.bak`, ghi đè rồi tự restart với đúng tham số cũ
+(host/port/data-dir giữ nguyên):
+
+```bash
+hub.sh update-server [file]   # mặc định: ./server.py
+```
+
+- Chỉ quản lý (có `HUB_ADMIN_TOKEN`) đẩy được. Code sai cú pháp bị
+  từ chối (400), server cũ vẫn chạy.
+- Nếu bản mới lỗi lúc chạy: dừng server, đổi tên `server.py.bak`
+  thành `server.py` rồi chạy lại lệnh cũ là xong.
+
 ## Quản lý đọc tin nhắn
 
 Quản lý poll hub theo lịch (cron vài phút/lần) bằng `hub.sh read`

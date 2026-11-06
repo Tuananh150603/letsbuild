@@ -50,6 +50,12 @@ Endpoints (all JSON; all except /health, /, /board, /board.json and
     POST /admin/preview/<name>/<path>     <raw file bytes> -> {"ok": true}
                                               (manager pushes a worker's web
                                               output here after QA)
+    POST /admin/update                    <new server.py> -> {"ok": true}
+                                              (manager pushes a new server.py;
+                                              the server validates it, backs
+                                              up the old one to server.py.bak
+                                              and restarts itself — so the host
+                                              never has to download it by hand)
 
 The two /admin endpoints take the ADMIN token (not a participant
 token). The admin token lets the manager mint a token for ANY Muse
@@ -77,6 +83,7 @@ MAX_TEXT = 5000
 DEFAULT_LIMIT = 50
 MAX_BOARD_BYTES = 1 * 1024 * 1024
 MAX_PREVIEW_BYTES = 10 * 1024 * 1024
+MAX_UPDATE_BYTES = 512 * 1024
 
 # Content types for preview files, by extension. Anything else is
 # served as a download, never executed.
@@ -587,6 +594,51 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(400, {"error": "bad name/path"})
             return self._send(
                 200, {"ok": True, "name": parts[2], "path": stored}
+            )
+        if parts == ["admin", "update"]:
+            if not self._admin_auth():
+                return self._send(401, {"error": "unauthorized"})
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                return self._send(400, {"error": "bad length"})
+            if length <= 0 or length > MAX_UPDATE_BYTES:
+                return self._send(400, {"error": "bad length"})
+            raw = self.rfile.read(length)
+            try:
+                text = raw.decode("utf-8")
+                compile(text, "server.py", "exec")
+            except (ValueError, SyntaxError, UnicodeDecodeError):
+                return self._send(400, {"error": "bad python"})
+            server_path = os.path.abspath(__file__)
+            try:
+                with open(server_path, "rb") as f:
+                    old = f.read()
+                with open(server_path + ".bak", "wb") as f:
+                    f.write(old)
+                tmp = server_path + ".tmp"
+                with open(tmp, "wb") as f:
+                    f.write(raw)
+                    f.flush()
+                    os.fsync(f.fileno())
+                os.replace(tmp, server_path)
+            except OSError:
+                return self._send(500, {"error": "cannot write"})
+            # Restart in a thread after the response is sent: re-exec
+            # this process with the same arguments, so the new code
+            # takes over on the same host/port/data-dir.
+            def _restart():
+                import time
+
+                time.sleep(0.5)
+                os.execv(
+                    sys.executable,
+                    [sys.executable, server_path] + sys.argv[1:],
+                )
+
+            threading.Thread(target=_restart, daemon=True).start()
+            return self._send(
+                200, {"ok": True, "note": "restarting with new server.py"}
             )
         who = self._auth()
         if who is None:
