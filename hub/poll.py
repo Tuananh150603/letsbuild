@@ -17,10 +17,16 @@ import argparse
 import json
 import os
 import sys
+import time
+import urllib.error
 import urllib.request
 
 DEFAULT_CONFIG = os.path.expanduser("~/.config/letsbuild-hub")
 DEFAULT_STATE = os.path.expanduser("~/.hub-last-seen.json")
+
+# Retry transient hub failures (hub on a laptop, proxy password rotates,
+# Tailscale hiccups): 3 attempts total, 2s then 5s between tries.
+RETRY_DELAYS = (2, 5)
 
 
 def load_config(path):
@@ -45,8 +51,21 @@ def get(path, cfg, proxy):
     if proxy:
         opener = urllib.request.build_opener(
             urllib.request.ProxyHandler({"http": proxy, "https": proxy}))
-    with opener.open(req, timeout=20) as resp:
-        return json.load(resp)
+    last = None
+    for attempt in range(3):
+        try:
+            with opener.open(req, timeout=20) as resp:
+                return json.load(resp)
+        except urllib.error.HTTPError as e:
+            # 401/403 = auth problem; retrying will not fix it.
+            if e.code in (401, 403):
+                raise
+            last = e
+        except Exception as e:
+            last = e
+        if attempt < 2:
+            time.sleep(RETRY_DELAYS[attempt])
+    raise last
 
 
 def main():

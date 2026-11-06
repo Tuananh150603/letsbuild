@@ -71,12 +71,12 @@ json_escape() {
 cmd="${1:-}"; shift || true
 case "$cmd" in
   health)
-    curl -s "${PROXY_ARGS[@]}" "$HUB_URL/health"
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" "$HUB_URL/health"
     echo
     ;;
   rooms)
     require_token
-    curl -s "${PROXY_ARGS[@]}" -H "Authorization: Bearer $HUB_TOKEN" "$HUB_URL/rooms"
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -H "Authorization: Bearer $HUB_TOKEN" "$HUB_URL/rooms"
     echo
     ;;
   mint)
@@ -84,14 +84,14 @@ case "$cmd" in
     name="$1"
     [ -n "$name" ] || { echo "usage: hub.sh mint <name>" >&2; exit 2; }
     body="{\"name\": $(json_escape "$name")}"
-    curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
       -H "Content-Type: application/json" -d "$body" \
       "$HUB_URL/admin/tokens"
     echo
     ;;
   members)
     : "${HUB_ADMIN_TOKEN:?HUB_ADMIN_TOKEN is not set (manager only)}"
-    curl -s "${PROXY_ARGS[@]}" -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
       "$HUB_URL/admin/tokens"
     echo
     ;;
@@ -99,11 +99,11 @@ case "$cmd" in
     : "${HUB_ADMIN_TOKEN:?HUB_ADMIN_TOKEN is not set (manager only)}"
     if [ -n "${1:-}" ]; then
       [ -f "$1" ] || { echo "push-board: file not found: $1" >&2; exit 2; }
-      curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+      curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
         -H "Content-Type: application/json" --data-binary "@$1" \
         "$HUB_URL/admin/board"
     else
-      curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+      curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
         -H "Content-Type: application/json" --data-binary "@-" \
         "$HUB_URL/admin/board"
     fi
@@ -115,7 +115,7 @@ case "$cmd" in
     [ -n "$name" ] && [ -n "$file" ] || { echo "usage: hub.sh push-preview <name> <file> [path]" >&2; exit 2; }
     [ -f "$file" ] || { echo "push-preview: file not found: $file" >&2; exit 2; }
     [ -n "$path" ] || path="$(basename "$file")"
-    curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
       --data-binary "@$file" \
       "$HUB_URL/admin/preview/$name/$path"
     echo
@@ -124,7 +124,7 @@ case "$cmd" in
     : "${HUB_ADMIN_TOKEN:?HUB_ADMIN_TOKEN is not set (manager only)}"
     file="${1:-server.py}"
     [ -f "$file" ] || { echo "update-server: file not found: $file" >&2; exit 2; }
-    curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_ADMIN_TOKEN" \
       --data-binary "@$file" \
       "$HUB_URL/admin/update"
     echo
@@ -135,7 +135,7 @@ case "$cmd" in
     text="$*"
     [ -n "$text" ] || { echo "usage: hub.sh send <room> <text...>" >&2; exit 2; }
     body="{\"text\": $(json_escape "$text")}"
-    curl -s "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_TOKEN" \
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -X POST -H "Authorization: Bearer $HUB_TOKEN" \
       -H "Content-Type: application/json" -d "$body" \
       "$HUB_URL/rooms/$room/messages"
     echo
@@ -151,7 +151,7 @@ case "$cmd" in
         *) echo "usage: hub.sh read <room> [--since <id>] [--limit <n>]" >&2; exit 2 ;;
       esac
     done
-    curl -s "${PROXY_ARGS[@]}" -H "Authorization: Bearer $HUB_TOKEN" \
+    curl -s --retry 3 --retry-delay 2 --retry-connrefused "${PROXY_ARGS[@]}" -H "Authorization: Bearer $HUB_TOKEN" \
       "$HUB_URL/rooms/$room/messages?since=$since&limit=$limit"
     echo
     ;;
