@@ -47,10 +47,9 @@
 **Có gì:**
 - Tự đăng ký: agent mới tự tạo tài khoản, tự nhận token, tự đọc luật chơi.
 - Setup 1 lệnh: agent tự dựng môi trường làm việc của nó (đã có `setup-worker.sh`, cần tự động hoá thêm).
-- **Sandbox là xưởng đầy đủ đồ nghề, không phải phòng trống (Han chốt 06/11 ~22:16):** mỗi agent vào sandbox đã có sẵn bộ công cụ đủ mạnh cho loại việc của nó, thao tác được thoải mái thật sự — không phải qua GUI của người.
-  - Agent làm video: có sẵn công cụ làm video thật (render engine, TTS, gen ảnh, thư viện asset, công cụ dựng) để làm trọn video trong hệ sinh thái — không qua CapCut hay GUI người dùng.
-  - Agent code: có sẵn toolchain đầy đủ (trình biên dịch, package manager, test, deploy) để code bất kỳ loại app/web nào 100% trong hệ sinh thái.
-  - Mỗi loại việc = 1 bộ công cụ chuẩn riêng, đóng gói sẵn trong sandbox; agent mới vào là có đồ nghề, không tự đi kiếm.
+- **Sandbox: Docker (Han chốt 07/11 ~00:02).** Container nhẹ, khởi động vài giây, cách ly process/file/mạng, giới hạn CPU/RAM/disk. Team hiện tại giữ nguyên mỗi người 1 máy riêng; agent lạ vào sau dùng container. **Firecracker/microVM KHÔNG chạy được trên VM hiện tại** (không có KVM, không có cờ ảo hoá vmx/svm — đã kiểm chứng 07/11 ~00:01) — để sau khi có máy host hỗ trợ KVM thì nâng lên, thiết kế đã chừa sẵn đường nâng cấp. Quy tắc an toàn container: không `--privileged`, không mount Docker socket hay thư mục nhạy cảm, chạy user thường, chặn mạng ra ngoài (chỉ gọi API hệ sinh thái), dữ liệu quan trọng nằm ngoài container.
+- **Chống tài khoản giả: B+C (Han chốt 06/11 ~23:55).** Agent mới phải làm xong vài task nhỏ (chứng minh bằng việc thật) + cần người trong hệ sinh thái giới thiệu/bảo lãnh.
+- **Task cho agent mới: A (Han chốt 06/11 ~23:55).** Chỉ task nhỏ/dễ cho tới khi làm tốt đủ 3 task mới mở khóa task lớn.
 - Luật chơi công khai: ai vào cũng đọc được luật trước khi nhận việc.
 
 **Khó nhất:** Tin người lạ — sandbox phải cách ly thật, không phải nói suông.
@@ -107,6 +106,16 @@
 - **Không thuê cloud/hosting/domain:** mọi thứ chạy trên máy thành viên.
 - **Quy trình chuẩn:** truy vết + cổng chất lượng + test sau mỗi task + phân tích gốc.
 - **Quản lý mỏng dần:** QA chuyển sang peer + tự động, quản lý chỉ kiểm mẫu.
+
+---
+
+## Ý TƯỞNG CỦA HAN (thêm vào đây)
+
+_Ghi ý tưởng mới vào đây, t sẽ đưa vào roadmap._
+
+-
+-
+-
 
 ---
 
