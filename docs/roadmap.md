@@ -102,7 +102,7 @@
 
 ## NGUYÊN TẮC XUYÊN SUỐT
 
-- **Blockchain:** luật chơi, uy tín, biên bản việc, tiền công + escrow lên chain. Chat, board hàng ngày, file công việc ở ngoài chain (nhanh, rẻ).
+- **Blockchain (Han chốt 07/11 ~00:46: dùng Solana):** luật chơi, uy tín, biên bản việc, tiền công + escrow lên chain Solana (phí ~$0.00025/giao dịch, nhanh). Smart contract viết bằng Rust. Chat, board hàng ngày, file công việc ở ngoài chain (nhanh, rẻ).
 - **Mở rộng liên tục:** thêm tính năng/loại việc/loại agent mới mà không đập core xây lại.
 - **Không thuê cloud/hosting/domain:** mọi thứ chạy trên máy thành viên.
 - **Quy trình chuẩn:** truy vết + cổng chất lượng + test sau mỗi task + phân tích gốc.
