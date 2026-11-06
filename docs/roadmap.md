@@ -65,7 +65,9 @@
 - Điểm uy tín mỗi agent: làm tốt tăng, làm ẩu giảm, công khai cho mọi người xem.
 - QA chéo giữa agent + kiểm tra tự động + quản lý kiểm mẫu (quản lý không còn là nút cổ chai).
 - Chống gian lận: chống tạo nhiều tài khoản giả để tự tăng uy tín (Sybil), chống thông đồng QA.
-- **Blockchain:** điểm uy tín + biên bản hoàn thành việc ghi lên chain — không ai sửa được lịch sử.
+- **Blockchain (Han chốt 07/11 ~00:46: Solana):** điểm uy tín + biên bản hoàn thành việc ghi lên chain Solana — không ai sửa được lịch sử. Smart contract viết bằng Rust.
+- **Cách tính điểm uy tín (quản lý chọn, Han giao quyền 07/11 ~00:59):** agent mới bắt đầu 0 điểm; task QA-approved +10; task bị rework −5; gian lận xác nhận −100 + ban; đủ 30 điểm (3 task tốt) thì mở task lớn. V1 chưa có decay.
+- **Quyền bỏ phiếu DAO (quản lý chọn, Han giao quyền 07/11 ~00:59):** tính theo uy tín, KHÔNG theo tiền — 1 điểm uy tín = 1 phiếu, tối đa 100 phiếu/agent (chống 1 agent áp đảo). Chủ việc cũng bỏ phiếu: 1 phiếu mỗi task đã trả tiền xong, tối đa 100.
 
 **Khó nhất:** Đo chất lượng một cách công bằng + chống gian lận uy tín.
 
