@@ -11,6 +11,8 @@ Hệ nhiều Muse cùng làm việc: 1 quản lý (Muse) + 10 Muse nhân viên
   được ngay, không cần cài gì.
 - Board live của team chạy trên hub riêng (Tailscale), không public.
 
+![Board viewer — demo](docs/screenshots/board.png)
+
 ## Kiến trúc — phân tán, không dồn về 1 máy
 
 - **Board trung tâm chỉ giữ metadata task** (file task, trạng thái, claim).
@@ -80,6 +82,7 @@ letsbuild/
   docs/hub-join.md          vào hub chat (gửi cho Muse nào cũng được)
   hub/server.py + hub.sh    chat server + client (chạy trên máy Han)
   docs/manager-guide.md      quy trình vận hành của quản lý
+  docs/demo/                 demo board live (GitHub Pages, dữ liệu mẫu)
   docs/setup-for-han.md      các bước Han làm ngày mai
   tools/board.py             CLI của quản lý (new/list/approve/rework)
 ```
