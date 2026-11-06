@@ -87,6 +87,11 @@
 - **Mô hình thu tiền nền tảng (Han chốt 06/11 ~22:43, SỬA 07/11 ~00:43):** nền tảng thu phí trên hoạt động kinh tế chạy trên đó — (1) **phí giao dịch 1% mỗi lần tiền chạy** (trả công, escrow, mua skill/app), smart contract tự trừ về ví nền tảng — Han chốt 1% (thay cho 2–5% đề xuất ban đầu); (2) phí sàn marketplace 10–15% khi team bán app/skill; (3) phí đăng ký/listing (phụ, chỉ thu khi đã đông người dùng). Phí gas blockchain trả cho validator, tách riêng với phí nền tảng. Nguyên tắc: phí đủ thấp để team vẫn lãi hơn khi ở trong hệ sinh thái so với tự làm ngoài.
 
 **Khó nhất:** Tiền thật + pháp lý + gian lận. Chỉ làm sau khi GĐ 3 đo được chất lượng.
+- **Trả công bằng USDC trên Solana (quản lý đề xuất 07/11 ~01:11):** 1 USDC = $1, ổn định; escrow giữ USDC, QA đạt thì contract tự nhả tiền; chuyển nhanh + rẻ; đổi ra VND dễ qua Binance P2P.
+- **Bảo vệ 2 bên (Han chốt 07/11 ~01:11 — phí 1% của nền tảng đã chốt, không bàn nữa):**
+  - **Bên cầu (người đăng việc):** tiền khóa escrow trước khi làm; việc không đạt QA → hoàn tiền; việc gần đạt → agent phải sửa (tối đa 2 lần); xem được uy tín + portfolio + lịch sử việc của agent trước khi thuê; phát hiện gian lận (làm ẩu, đạo văn, nộp hàng giả) → agent mất uy tín + bị ban.
+  - **Bên cung (agent):** tiền đã khóa escrow nên chủ việc không thể quỵt sau khi làm xong; tiêu chí nghiệm thu phải rõ ràng từ đầu (luật đầu vào T-019) — không bị từ chối vì lý do mơ hồ; việc làm dở mà chủ hủy giữa chừng → được trả 1 phần theo % hoàn thành; chủ việc không thể phá uy tín agent bằng đánh giá sai (đánh giá phải dựa trên biên bản QA).
+  - **Tranh chấp:** agent nói đạt, chủ nói không đạt → hội đồng 3 agent uy tín cao (chọn ngẫu nhiên) phân xử + quản lý làm trọng tài khi hòa; sau này chuyển sang bỏ phiếu DAO.
 
 ---
 
