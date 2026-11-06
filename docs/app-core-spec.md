@@ -40,6 +40,50 @@ rời nhau). App này là nền cho GĐ 2–5 trong `docs/vision-ecosystem.md`.
      "ts": "2026-11-06T10:00:00Z", "text": "..." }`.
 - Room: `team` (cả team) + `manager-<tên>` (1:1 với quản lý).
 
+## Mở rộng liên tục — thiết kế để tự lớn lên (Han chốt 06/11 ~21:58)
+
+App phải thiết kế để **tự mở rộng liên tục** theo tầm nhìn hệ sinh
+thái thật sự — thêm tính năng / loại việc / loại agent mới mà KHÔNG
+phải đập core xây lại. Đây là nguyên tắc thiết kế, áp dụng ngay từ
+v1 (không phải tính năng làm sau).
+
+### 1. Core nhỏ + ổn định, tính năng là module cắm thêm
+- **Core (ít đổi):** xác thực, dữ liệu board, chat, vòng đời task
+  (tạo → nhận → nộp → QA). Core càng nhỏ càng tốt, càng ít đổi càng tốt.
+- **Module (hay đổi):** loại task mới, bộ kiểm tra QA mới, tích hợp
+  mới, khả năng mới của agent. Module cắm vào core qua interface
+  rõ ràng, gỡ ra cũng không làm core hỏng.
+
+### 2. API-first — mọi thứ UI làm được thì agent ngoài cũng làm được
+- Mọi thao tác trong UI đều đi qua API (`/api/*`). Không có đường
+  tắt riêng cho UI.
+- Nhờ vậy agent bên ngoài (không qua UI) cũng tạo task, nhận việc,
+  nộp output, chat được bằng cùng API đó. Đây là nền để GĐ 2
+  (agent lạ tự vào) và GĐ 5 (nhiều app trên cùng giao thức) mọc lên.
+
+### 3. Đăng ký tự động (registry) — cái mới tự khai báo, không sửa tay
+- Loại task mới, loại agent mới, bộ kiểm tra mới: tự đăng ký bằng
+  1 file manifest (tên, phiên bản, nó làm được gì) — core đọc
+  manifest là biết, không cần sửa code core để thêm loại mới.
+- V1 làm đơn giản: `type` của task là chuỗi tự do (không hardcode
+  danh sách loại); server không từ chối `type` lạ. Frontend hiển thị
+  `type` lạ bình thường. Đây là hạt nhân của registry — v1 chỉ cần
+  không khoá cứng danh sách.
+
+### 4. Sự kiện (events) — core báo, module nghe
+- Core phát sự kiện khi có thay đổi: task tạo xong, task nộp xong,
+  QA duyệt xong, chat có tin mới. Module (vd: bộ kiểm tra tự động,
+  bộ tính uy tín ở GĐ 3) đăng ký nghe sự kiện đó để chạy việc của nó.
+- V1 làm đơn giản: sau mỗi lần ghi `board.json` / `messages.jsonl`,
+  core ghi thêm 1 dòng vào `events.jsonl`
+  (`{ "ts", "event": "task_submitted", "task_id": "T-009", ... }`).
+  Module sau này chỉ cần đọc file này.
+
+### Quy tắc khi thêm tính năng mới (về sau)
+- Thêm bằng module/API/registry, không sửa core trừ khi bắt buộc.
+- Nếu bắt buộc phải sửa core thì sửa sao cho API cũ vẫn chạy
+  (tương thích ngược) — không phá client cũ.
+
 ## API (BE — worker 2 làm)
 
 Base: cùng host/port với hub. Mọi API trả JSON. Lỗi trả
@@ -105,6 +149,7 @@ Trang duy nhất `/` (thay cho viewer chat cũ), gồm 2 vùng:
 | 10 | Endpoint hub cũ còn chạy | `/board`, `/preview/*`, `/admin/update` vẫn chạy | Mở `/board` + `/preview/board-viewer/` + gọi `/admin/update` (dry-run): đều trả 200 |
 | 11 | Frontend: board + chat + modal + form | Đủ giao diện, đúng API T-009 | Mở `/`, tạo task bằng form → thấy ở Queue; bấm thẻ → modal đúng dữ liệu; chat gửi/nhận được |
 | 12 | Không thêm dependency | Chạy bằng Python thuần | Chạy server trên máy sạch (chỉ stdlib), không lỗi import |
+| 13 | Mở rộng: `type` task tự do + `events.jsonl` | Không khoá cứng loại task; core ghi sự kiện sau mỗi lần ghi board/chat | Tạo task với `type` lạ (vd `"type": "video-edit"`) → tạo được, hiển thị bình thường; kiểm tra file `events.jsonl` có dòng sự kiện sau khi tạo/nhận/nộp/QA task |
 
 1. Chạy 1 lệnh, mở trình duyệt, thấy board + chat.
 2. Tạo task → xuất hiện ở Queue. Nhận task → sang Doing.
