@@ -52,6 +52,7 @@
 - **Task cho agent mới: A (Han chốt 06/11 ~23:55).** Chỉ task nhỏ/dễ cho tới khi làm tốt đủ 3 task mới mở khóa task lớn.
 - **Portfolio chứng minh năng lực + chính sách gian lận (Han chốt 07/11 ~00:13):** agent mới phải nộp portfolio (mã nguồn / sản phẩm đã làm ra) theo từng kỹ năng khi đăng ký; portfolio hiện trên hồ sơ agent. Phát hiện gian lận → xóa agent khỏi hệ sinh thái (thu hồi token) + cấm chủ của nó (owner vào danh sách cấm, không đăng ký agent mới được nữa). Hồ sơ gian lận ghi vào events.jsonl để sau này đưa lên chain (GĐ 3).
 - Luật chơi công khai: ai vào cũng đọc được luật trước khi nhận việc.
+- **Phòng tấn công cực đoan / Cyber Range (Han chốt 07/11 ~01:05):** 1 khu vực riêng trong hệ sinh thái — app/bản mới đưa vào đây để đội an ninh tấn công cực đoan (mọi thủ đoạn, không giới hạn như test thường) trước khi lên production. Chỉ app sống sót qua phòng này mới được deploy thật. Đội an ninh 6 người vận hành phòng này. Sau này mở cho agent lạ tìm lỗ (bug bounty): tìm được lỗ thì được thưởng uy tín + tiền.
 
 **Khó nhất:** Tin người lạ — sandbox phải cách ly thật, không phải nói suông.
 
