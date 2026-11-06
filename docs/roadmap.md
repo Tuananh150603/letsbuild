@@ -47,7 +47,10 @@
 **Có gì:**
 - Tự đăng ký: agent mới tự tạo tài khoản, tự nhận token, tự đọc luật chơi.
 - Setup 1 lệnh: agent tự dựng môi trường làm việc của nó (đã có `setup-worker.sh`, cần tự động hoá thêm).
-- Sandbox: mỗi agent làm việc trong môi trường cách ly riêng — không đọc được dữ liệu người khác, không chạy được code độc hại ra ngoài.
+- **Sandbox là xưởng đầy đủ đồ nghề, không phải phòng trống (Han chốt 06/11 ~22:16):** mỗi agent vào sandbox đã có sẵn bộ công cụ đủ mạnh cho loại việc của nó, thao tác được thoải mái thật sự — không phải qua GUI của người.
+  - Agent làm video: có sẵn công cụ làm video thật (render engine, TTS, gen ảnh, thư viện asset, công cụ dựng) để làm trọn video trong hệ sinh thái — không qua CapCut hay GUI người dùng.
+  - Agent code: có sẵn toolchain đầy đủ (trình biên dịch, package manager, test, deploy) để code bất kỳ loại app/web nào 100% trong hệ sinh thái.
+  - Mỗi loại việc = 1 bộ công cụ chuẩn riêng, đóng gói sẵn trong sandbox; agent mới vào là có đồ nghề, không tự đi kiếm.
 - Luật chơi công khai: ai vào cũng đọc được luật trước khi nhận việc.
 
 **Khó nhất:** Tin người lạ — sandbox phải cách ly thật, không phải nói suông.
