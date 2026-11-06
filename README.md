@@ -1,5 +1,4 @@
 # LetsBuild — Muse-team framework (v1, file-based)
-> **Trạng thái:** đang thử nghiệm và xây dựng — khung v1 đã chạy thử vòng đời task đầy đủ, đang chuẩn bị đưa agent vào thử việc.
 
 Hệ nhiều Muse cùng làm việc: 1 quản lý (Muse) + 10 Muse nhân viên
 (tài khoản riêng, máy riêng, đội agent riêng).
@@ -11,11 +10,11 @@ Hệ nhiều Muse cùng làm việc: 1 quản lý (Muse) + 10 Muse nhân viên
 - **Mỗi Muse chạy trên máy riêng** của nó, dùng tool riêng của nó.
 - **Output đưa lên kho chung** (folder này, copy lên Drive/Git để
   cả 11 tài khoản cùng đọc/ghi được).
-- **Không có kênh chat trực tiếp** giữa các tài khoản Muse riêng.
-  Giao tiếp = bất đồng bộ qua file trong kho chung. Việc gấp thì
-  Han relay tay, nhưng hệ thống không dựa vào đó. Mọi trao đổi tuân
-  theo `docs/protocol.md` (định nghĩa từ đầu, không đổi khi đổi
-  transport).
+- **Kênh chat (hub, mới 06/11/2026):** chat real-time qua Tailscale
+  (`hub/`, server Python chạy trên máy Han — máy Han tắt thì hub tắt,
+  board git vẫn chạy). Tin nhắn nhanh chỉ để hỏi đáp/phối hợp; giao
+  task, nộp task vẫn qua board. Mọi Muse vào hub bằng token riêng
+  (quản lý cấp, xem `docs/hub-join.md`).
 
 ## Vai trò
 
@@ -69,6 +68,9 @@ letsbuild/
   tasks/examples/T-000-example.md   task mẫu đã điền
   outputs/<ID>/              output của từng task (nhân viên ghi)
   docs/worker-onboarding.md  hướng dẫn dán cho Muse nhân viên
+  docs/worker-join.md       vào git bằng deploy key (gửi cho Muse mới)
+  docs/hub-join.md          vào hub chat (gửi cho Muse nào cũng được)
+  hub/server.py + hub.sh    chat server + client (chạy trên máy Han)
   docs/manager-guide.md      quy trình vận hành của quản lý
   docs/setup-for-han.md      các bước Han làm ngày mai
   tools/board.py             CLI của quản lý (new/list/approve/rework)
@@ -78,11 +80,12 @@ letsbuild/
 
 - **v1 (bộ khung này):** file-based. Đủ để ngày mai thêm nhân viên
   và chạy task thật. Không cần server, không cần mạng riêng.
-- **Phase 2 (sau này, nếu cần):** server API + message queue trên
-  mạng riêng (Tailscale) để tin nhắn giữa các Muse đạt mili-giây.
-  Lưu ý: tin nhắn nhanh không làm task nhanh — tốc độ thật đến từ
-  làm song song, không phải từ tin nhắn. Đừng xây phase 2 chỉ vì
-  muốn "nhanh hơn chat".
+- **Phase 2 (XONG 06/11/2026 — hub chat):** chat real-time trên mạng
+  riêng (Tailscale) qua `hub/` — server chạy trên máy Han, token
+  riêng từng Muse, quản lý cấp token từ xa. Lưu ý: tin nhắn nhanh
+  không làm task nhanh — tốc độ thật đến từ làm song song, không
+  phải từ tin nhắn. Board git vẫn là xương sống (hub tắt thì board
+  vẫn chạy).
 
 ## Luật chung mọi nhân viên phải theo
 

@@ -1,22 +1,21 @@
-# Setup cho Han — các bước ngày mai
+# Setup cho Han — các bước chuẩn bị
 
-Framework đã nằm trong folder `letsbuild/` này. Ngày mai Han làm
+Framework đã nằm trong folder `letsbuild/` này. Han làm
 theo thứ tự sau để thêm "nhân viên" vào hệ:
 
-## Bước 1: Đưa folder lên kho chung
+## Bước 1: Kho chung (XONG 06/11)
 
-- Copy toàn bộ folder `letsbuild/` lên 1 folder chung mà cả 11 tài
-  khoản đều đọc/ghi được: Google Drive folder (chia sẻ cho 10
-  tài khoản kia) hoặc 1 Git repo (mời 10 tài khoản làm
-  collaborator).
-- Khuyến nghị: Git repo nếu các Muse kia dùng được git (có
-  lịch sử + xử lý xung đột tốt hơn). Drive thì đơn giản hơn
-  nhưng xung đột file phải nhờ quản lý giải quyết tay.
+- Repo làm việc: https://github.com/Tuananh150603/youtube-room
+  (PRIVATE; repo public `letsbuild` kia chỉ làm portfolio).
+- Framework đã push lên repo. Mời 10 tài khoản làm collaborator
+  (mỗi con dùng quyền riêng, không dùng chung token).
+- File lớn (voice, draft CapCut, ảnh) KHÔNG đưa vào git — để
+  Drive riêng, chỉ ghi đường dẫn vào report/task.
 
-## Bước 2: Điền đường dẫn kho chung
+## Bước 2: Điền đường dẫn kho chung (XONG 06/11)
 
-- Mở `docs/worker-onboarding.md`, điền đường dẫn kho chung vào
-  chỗ `[KHO CHUNG]`.
+- Kho chung đã điền sẵn URL trong `docs/worker-onboarding.md` —
+  không cần điền tay nữa.
 
 ## Bước 3: Dán onboarding cho từng Muse nhân viên
 

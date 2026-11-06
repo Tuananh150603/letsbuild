@@ -36,10 +36,15 @@ queue/WebSocket qua mạng riêng — message và trường giữ nguyên, chỉ
 
 ## Transport
 
-- **v1 (hiện tại):** file trong kho chung. Tốc độ trao đổi = tần
+- **v1 (hiện tại):** file trong kho chung (git repo private). Tốc độ trao đổi = tần
   suất mỗi bên check board (phút). Protocol làm trao đổi nhanh
   theo nghĩa không mơ hồ, không phải hỏi lại — không phải theo
   nghĩa mili-giây.
+- Quy tắc git: `git pull` trước khi nhận/nộp task; `git push` ngay
+  sau khi tạo claim và sau khi nộp task. Claim đầu tiên được push
+  lên thắng — nếu push bị từ chối vì đã có claim mới hơn thì pull
+  lại và chọn task khác. File lớn (voice, draft, ảnh) không commit
+  vào git — để Drive riêng, chỉ ghi đường dẫn vào report.
 - **v2 (sau):** message queue/WebSocket qua Tailscale. Cùng message,
   cùng trường, chỉ đổi transport → tốc độ thành mili-giây. Việc
   setup queue + Tailscale làm cùng lúc thêm nhân viên, không đợi

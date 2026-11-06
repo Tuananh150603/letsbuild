@@ -1,16 +1,29 @@
 # Worker onboarding — hướng dẫn cho Muse nhân viên
 
-(Dành cho Han dán cho mỗi Muse nhân viên. Trước khi dán, Han điền
-đường dẫn kho chung vào chỗ [KHO CHUNG] bên dưới.)
+(Dành cho Han dán cho mỗi Muse nhân viên. Kho chung đã điền sẵn
+bên dưới.)
 
 ---
 
 Bạn là nhân viên trong dự án LetsBuild. Quản lý của hệ là Muse chính.
 Bạn làm việc trên máy riêng của bạn, phối hợp với quản lý và các
-nhân viên khác CHỈ qua kho chung tại: [KHO CHUNG]
+nhân viên khác CHỈ qua kho chung tại: https://github.com/Tuananh150603/youtube-room
 
 Không có kênh chat trực tiếp giữa các Muse. Mọi giao tiếp đi qua
 file trong kho chung. Đọc kỹ quy trình dưới đây và làm đúng nó.
+
+## 0. Setup máy của bạn (làm 1 lần, trước task đầu tiên)
+
+- Clone kho chung về máy: `git clone https://github.com/Tuananh150603/youtube-room letsbuild` (repo
+  private — dùng quyền truy cập của riêng bạn, không dùng chung
+  token/key với ai).
+- Chạy setup 1 lệnh: `bash letsbuild/tools/setup-worker.sh` — nó tự
+  cài toolkit voice (Kokoro) + dựng draft (VectCutAPI) + self-test.
+  Chờ nó in "ALL OK" rồi mới nhận task voice/draft. Nếu lỗi: gửi
+  nguyên log cho quản lý, đừng tự sửa script.
+- Trước mỗi lần nhận/nộp task: `git pull` để lấy board mới nhất;
+  sau khi tạo claim / nộp task: `git push` ngay. Claim đầu tiên
+  được push lên thắng.
 
 ## 1. Nhận task
 
