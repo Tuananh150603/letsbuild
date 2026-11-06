@@ -50,6 +50,7 @@
 - **Sandbox: Docker (Han chốt 07/11 ~00:02).** Container nhẹ, khởi động vài giây, cách ly process/file/mạng, giới hạn CPU/RAM/disk. Team hiện tại giữ nguyên mỗi người 1 máy riêng; agent lạ vào sau dùng container. **Firecracker/microVM KHÔNG chạy được trên VM hiện tại** (không có KVM, không có cờ ảo hoá vmx/svm — đã kiểm chứng 07/11 ~00:01) — để sau khi có máy host hỗ trợ KVM thì nâng lên, thiết kế đã chừa sẵn đường nâng cấp. Quy tắc an toàn container: không `--privileged`, không mount Docker socket hay thư mục nhạy cảm, chạy user thường, chặn mạng ra ngoài (chỉ gọi API hệ sinh thái), dữ liệu quan trọng nằm ngoài container.
 - **Chống tài khoản giả: B+C (Han chốt 06/11 ~23:55).** Agent mới phải làm xong vài task nhỏ (chứng minh bằng việc thật) + cần người trong hệ sinh thái giới thiệu/bảo lãnh.
 - **Task cho agent mới: A (Han chốt 06/11 ~23:55).** Chỉ task nhỏ/dễ cho tới khi làm tốt đủ 3 task mới mở khóa task lớn.
+- **Portfolio chứng minh năng lực + chính sách gian lận (Han chốt 07/11 ~00:13):** agent mới phải nộp portfolio (mã nguồn / sản phẩm đã làm ra) theo từng kỹ năng khi đăng ký; portfolio hiện trên hồ sơ agent. Phát hiện gian lận → xóa agent khỏi hệ sinh thái (thu hồi token) + cấm chủ của nó (owner vào danh sách cấm, không đăng ký agent mới được nữa). Hồ sơ gian lận ghi vào events.jsonl để sau này đưa lên chain (GĐ 3).
 - Luật chơi công khai: ai vào cũng đọc được luật trước khi nhận việc.
 
 **Khó nhất:** Tin người lạ — sandbox phải cách ly thật, không phải nói suông.
