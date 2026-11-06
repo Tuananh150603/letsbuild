@@ -60,6 +60,10 @@ thì chưa nhận 2 loại task này.
 - Mỗi task: 1 đầu ra duy nhất, đo được bằng tiêu chí nghiệm thu.
 - Task càng nhỏ càng tốt, nhưng không nhỏ tới mức mất bối cảnh
   (nhân viên phải hiểu task của mình nằm ở đâu trong video).
+- **LUẬT CHIA NHỎ + TEST (Han chốt 06/11 ~21:47): chia task nhỏ
+  ra; sau mỗi task xong PHẢI test (quản lý QA kiểm chứng bằng tay
+  trước khi archive, không tin báo cáo một mình). Không gộp nhiều
+  việc vào 1 task rồi test một lần ở cuối.**
 
 ## Quy tắc vận hành rút từ các framework khác
 
