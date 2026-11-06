@@ -25,7 +25,10 @@ queue/WebSocket qua mạng riêng — message và trường giữ nguyên, chỉ
    không ghi đè.
 3. **task_submitted** (worker → manager): chuyển task file sang
    `board/done/` + ghi output vào `outputs/<ID>/` + `report.md`
-   (mở đầu bằng kết quả).
+   (mở đầu bằng kết quả). **Báo cáo khi xong task CHỈ lên hub**
+   (room team hoặc 1:1 với quản lý) — ghi rõ task nào, kết quả
+   gì, output ở đâu; không báo cáo qua kênh nào khác. Quản lý tự
+   vào git check task + output để QA.
 4. **qa_approved** (manager → worker): chuyển task file sang
    `board/archive/` + board.py ghi log vào `worker-log.md`.
 5. **qa_rework** (manager → worker): ghi note QA vào task file,
