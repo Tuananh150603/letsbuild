@@ -32,6 +32,22 @@ def main():
     end = js.index(end_marker, start) + len("\n};")
     js = js[:start] + "var FALLBACK_DATA = " + json.dumps(board, ensure_ascii=False, indent=2) + ";" + js[end:]
 
+    # 1b. Fix B1 (QA T-007): an empty board hid all 4 columns and showed
+    #     "Chưa tải được dữ liệu board." even though the data HAD loaded.
+    #     The board must always stay visible (each empty column shows
+    #     "Chưa có task"); the empty-state note is only for a failed load,
+    #     which cannot happen here because FALLBACK_DATA is embedded.
+    js = js.replace(
+        'document.getElementById("empty-state").hidden = total > 0;',
+        'document.getElementById("empty-state").hidden = true;',
+        1,
+    )
+    js = js.replace(
+        'document.getElementById("board").hidden = total === 0;',
+        'document.getElementById("board").hidden = false;',
+        1,
+    )
+
     # 2. Add auto-refresh to the page head.
     index_html = index_html.replace(
         '<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -72,9 +88,25 @@ def main():
     assert 'href="styles.css"' not in page and 'src="app.js"' not in page
 
     text = SERVER_PY.read_text(encoding="utf-8")
-    assert PLACEHOLDER in text, "placeholder not found in server.py"
     const = "BOARD_PAGE_HTML = " + repr(page)
-    text = text.replace(PLACEHOLDER, const, 1)
+    # Replace the placeholder on first build, or the existing constant
+    # line on rebuilds (the repr is a single line, so ^...$ matches it).
+    if PLACEHOLDER in text:
+        text = text.replace(PLACEHOLDER, const, 1)
+    else:
+        # Use a lambda as the replacement so the repr's backslash
+        # escapes (\n, \', ...) are inserted literally — re.sub would
+        # otherwise interpret them (e.g. \n becomes a real newline and
+        # breaks the string literal across lines).
+        new_text, n = re.subn(
+            r"^BOARD_PAGE_HTML = .*$",
+            lambda m: const,
+            text,
+            count=1,
+            flags=re.MULTILINE,
+        )
+        assert n == 1, "BOARD_PAGE_HTML assignment not found in server.py"
+        text = new_text
     SERVER_PY.write_text(text, encoding="utf-8")
     print(f"injected BOARD_PAGE_HTML ({len(page)} chars) into server.py")
 
