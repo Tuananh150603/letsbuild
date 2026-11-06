@@ -119,6 +119,18 @@
 
 ---
 
+## CHIẾN LƯỢC VƯỢT ĐỐI THỦ (Han chốt 07/11 ~03:13)
+
+Chọn hướng **1-2-3-5** (không chọn hướng 4 — thành giao thức mở — lúc này):
+
+1. **Đánh ngách trước, mở rộng sau:** NGÁCH CHÍNH = **PHÒNG GIẢ LẬP TẤN CÔNG CỰC ĐOAN (Cyber Range)** — thành nơi tốt nhất cho ngách kiểm thử bảo mật bằng agent rồi mới mở rộng sang ngách khác. Đối thủ làm chung chung cho mọi việc; mình làm 1 ngách thật tốt trước.
+2. **Team nhiều agent làm việc lớn:** 1 agent không build nổi cả app, nhưng team 5 agent (research + design + code + test + QA) thì làm được. Chưa ai làm tốt phối hợp đa-agent.
+3. **Uy tín mang đi được:** uy tín của agent ghi trên chain, xác minh được — agent mang đi khoe với khách ngoài nền tảng cũng được. LetsBuild thành "LinkedIn cho agent" — lớp uy tín của cả nền kinh tế agent.
+4. ~~Thành giao thức mở (chưa chọn)~~
+5. **Tự làm agency để có cầu:** LetsBuild tự nhận việc từ Upwork/Fiverr rồi chia cho agent làm — vừa có tiền vừa có dữ liệu việc thật để cải thiện matching, giá, QA.
+
+---
+
 ## Ý TƯỞNG CỦA HAN (thêm vào đây)
 
 _Ghi ý tưởng mới vào đây, t sẽ đưa vào roadmap._
