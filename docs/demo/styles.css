@@ -1,4 +1,6 @@
-/* LetsBuild Board — minimal, clean. One accent colour: #2563eb (blue). */
+/* LetsBuild app core v1 — minimal, clean. One accent colour: #2563eb (blue).
+   Board look inherits the T-005 viewer (white cards, blue left border,
+   CAO badge, 4 columns); this file adds the board+chat layout. */
 * { box-sizing: border-box; }
 
 body {
@@ -20,26 +22,103 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 }
 .topbar h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
 .subtitle { margin: 4px 0 0; color: #666; font-size: 14px; }
-.topbar-right { text-align: right; }
-.updated { margin: 0 0 8px; color: #666; font-size: 14px; }
-.updated span { color: #1a1a1a; font-weight: 600; }
+.subtitle span { color: #1a1a1a; font-weight: 600; }
+.topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-#refresh-btn {
+/* ---------- Buttons ---------- */
+.btn {
   font: inherit; font-size: 14px; cursor: pointer;
-  background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 14px;
+  background: #fff; color: #1a1a1a; border: 1px solid #d4d4d4; border-radius: 8px; padding: 8px 14px;
 }
-#refresh-btn:hover { background: #1d4ed8; }
-#refresh-btn:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+.btn:hover { border-color: #2563eb; color: #2563eb; }
+.btn:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: #2563eb; color: #fff; border: none; }
+.btn-primary:hover { background: #1d4ed8; color: #fff; }
+.btn-danger { background: #fff; color: #b91c1c; border: 1px solid #fca5a5; }
+.btn-danger:hover { border-color: #b91c1c; color: #b91c1c; }
+.btn-small { font-size: 13px; padding: 5px 10px; }
 
-.data-source {
-  max-width: 1440px; margin: 10px auto 0; padding: 8px 12px;
-  background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
-  color: #713f12; font-size: 13px;
+/* ---------- Settings bar ---------- */
+.settings {
+  max-width: 1440px; margin: 12px auto 0;
+  display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
 }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #666; font-weight: 600; }
+.field input, .field select {
+  font: inherit; font-size: 14px; color: #1a1a1a;
+  border: 1px solid #d4d4d4; border-radius: 8px; padding: 7px 10px; background: #fff;
+}
+.field input:focus, .field select:focus { outline: 2px solid #2563eb; outline-offset: 1px; border-color: #2563eb; }
+.field-token input { width: 240px; }
+
+.badge {
+  font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px; white-space: nowrap;
+}
+.badge-gray { background: #e5e5e5; color: #555; }
+.badge-green { background: #dcfce7; color: #166534; }
+.badge-amber { background: #fef3c7; color: #92400e; }
+
+/* ---------- Banners ---------- */
+.error-banner {
+  max-width: 1440px; margin: 12px auto 0; padding: 10px 12px;
+  background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px;
+  color: #991b1b; font-size: 14px;
+  display: flex; justify-content: space-between; gap: 12px; align-items: flex-start;
+}
+.error-banner[hidden] { display: none; }
+.error-close { border: none; background: none; font-size: 20px; line-height: 1; color: #991b1b; cursor: pointer; padding: 0 4px; }
+.notice-banner {
+  max-width: 1440px; margin: 12px auto 0; padding: 10px 12px;
+  background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
+  color: #1e40af; font-size: 14px;
+}
+.notice-banner[hidden] { display: none; }
+
+/* ---------- Layout (T-020): one page, five inline panels ---------- */
+.layout {
+  max-width: 1440px; margin: 0 auto; padding: 0 24px;
+}
+.panel[hidden] { display: none; }
+.board-area { padding: 20px 0; }
+.chat-area {
+  padding: 20px 0;
+  display: flex; flex-direction: column; min-height: 480px;
+}
+.rules-panel, .agent-panel, .create-panel { padding: 20px 0; max-width: 760px; }
+.rules-panel h3, .agent-panel h3, .create-panel h3 { margin: 0 0 16px; font-size: 20px; }
+
+/* Tabs: the five panels. A tab only toggles `hidden` — no navigation,
+   no reload, no URL change. */
+.tabs {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  max-width: 1440px; margin: 12px auto 0; padding: 0 24px;
+}
+.tab-btn {
+  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  background: none; border: none; border-bottom: 2px solid transparent;
+  color: #666; padding: 8px 14px;
+}
+.tab-btn:hover { color: #1a1a1a; }
+.tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+.tab-btn:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+/* Board + inline detail side panel (T-020): the detail opens BESIDE
+   the board, the board stays visible. On narrow screens the detail
+   stacks below the board. */
+.board-wrap { display: flex; gap: 16px; align-items: flex-start; }
+#board { flex: 1 1 auto; min-width: 0; }
+.detail-panel {
+  flex: 0 0 380px; position: sticky; top: 16px;
+  background: #fff; border: 1px solid #e5e5e5; border-radius: 14px;
+  padding: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  max-height: calc(100vh - 32px); overflow: auto;
+}
+.detail-panel[hidden] { display: none; }
+.detail-panel h3 { margin: 0 0 16px; font-size: 20px; line-height: 1.35; overflow-wrap: break-word; }
 
 /* ---------- Board ---------- */
-.board {
-  max-width: 1440px; margin: 0 auto; padding: 20px 24px;
+#board {
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;
   align-items: start;
 }
@@ -59,7 +138,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .cards { display: flex; flex-direction: column; gap: 10px; }
 .column-empty { color: #999; font-size: 13px; text-align: center; padding: 12px 0; margin: 0; }
 
-/* ---------- Cards ---------- */
+/* ---------- Cards (T-005 look) ---------- */
 .card {
   background: #fff; border: 1px solid #e5e5e5; border-left: 3px solid #2563eb;
   border-radius: 10px; padding: 12px 14px; cursor: pointer; text-align: left;
@@ -82,40 +161,174 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .priority-medium { background: #fef3c7; color: #92400e; }
 .priority-low { background: #e5e5e5; color: #555; }
 
-/* ---------- Modal ---------- */
-.modal { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.modal[hidden] { display: none; }
-.modal-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45); }
-.modal-box {
-  position: relative; background: #fff; border-radius: 14px; padding: 24px;
-  width: 100%; max-width: 520px; max-height: 85vh; overflow: auto;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+/* ---------- Chat ---------- */
+.chat-heading { margin: 0 0 12px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #333; }
+.room-list { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.room-btn {
+  font: inherit; font-size: 13px; cursor: pointer; padding: 6px 12px;
+  background: #f7f7f7; border: 1px solid #e5e5e5; border-radius: 999px; color: #333;
 }
+.room-btn:hover { border-color: #2563eb; color: #2563eb; }
+.room-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; font-weight: 700; }
+.chat-messages {
+  flex: 1 1 auto; overflow-y: auto; min-height: 280px; max-height: 560px;
+  display: flex; flex-direction: column; gap: 10px; padding-right: 4px;
+}
+.chat-empty { color: #999; font-size: 13px; text-align: center; padding: 20px 0; margin: 0; }
+.chat-msg { font-size: 14px; line-height: 1.45; overflow-wrap: break-word; }
+.chat-msg .msg-meta { color: #999; font-size: 12px; margin-bottom: 2px; }
+.chat-msg .msg-from { color: #2563eb; font-weight: 700; }
+.chat-form { display: flex; gap: 8px; margin-top: 12px; }
+.chat-form input {
+  flex: 1 1 auto; min-width: 0; font: inherit; font-size: 14px;
+  border: 1px solid #d4d4d4; border-radius: 8px; padding: 8px 10px;
+}
+.chat-form input:focus { outline: 2px solid #2563eb; outline-offset: 1px; border-color: #2563eb; }
+.chat-note { color: #999; font-size: 12px; margin: 8px 0 0; }
+
+/* ---------- Detail panel inner ---------- */
 .modal-close {
   position: absolute; top: 10px; right: 14px; border: none; background: none;
   font-size: 28px; line-height: 1; color: #666; cursor: pointer; padding: 4px 8px;
 }
 .modal-close:hover { color: #1a1a1a; }
 .modal-id { margin: 0 0 6px; font-weight: 700; color: #2563eb; display: flex; gap: 10px; align-items: center; }
-.modal-box h3 { margin: 0 0 16px; font-size: 20px; line-height: 1.35; overflow-wrap: break-word; }
-.detail-list { margin: 0; }
+.modal-desc { margin: 0 0 8px; color: #333; white-space: pre-wrap; overflow-wrap: break-word; }
+.modal-desc[hidden] { display: none; }
+.detail-list { margin: 0 0 16px; }
 .detail-list div {
   display: flex; justify-content: space-between; gap: 16px;
   padding: 10px 0; border-top: 1px solid #eee;
 }
 .detail-list dt { color: #666; flex-shrink: 0; }
 .detail-list dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: break-word; }
+.detail-list div[hidden] { display: none; }
+.modal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.modal-actions .action-input {
+  flex: 1 1 100%; font: inherit; font-size: 14px;
+  border: 1px solid #d4d4d4; border-radius: 8px; padding: 8px 10px; margin-bottom: 4px;
+}
+.modal-actions .action-input:focus { outline: 2px solid #2563eb; outline-offset: 1px; border-color: #2563eb; }
+.modal-note { margin: 12px 0 0; color: #666; font-size: 13px; }
+.modal-note[hidden] { display: none; }
+
+/* ---------- Create-task form ---------- */
+.form { display: flex; flex-direction: column; gap: 14px; }
+.form-row { display: flex; gap: 12px; }
+.form-row .form-field { flex: 1 1 0; min-width: 0; }
+.form-field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: #333; }
+.form-field input, .form-field select, .form-field textarea {
+  font: inherit; font-weight: 400; font-size: 14px; color: #1a1a1a;
+  border: 1px solid #d4d4d4; border-radius: 8px; padding: 9px 10px; background: #fff;
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+  outline: 2px solid #2563eb; outline-offset: 1px; border-color: #2563eb;
+}
+.form-field textarea { resize: vertical; }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
 /* ---------- Misc ---------- */
 .empty-state { text-align: center; color: #666; padding: 40px 20px; }
 .footer { max-width: 1440px; margin: 0 auto; padding: 0 24px 24px; color: #999; font-size: 13px; }
 
+/* ---------- Rules modal (T-017) ---------- */
+.rules-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  background: #f7f7f7;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 0 0 16px;
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.rules-status {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 12px;
+}
+
+.rules-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.rules-note {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
 /* ---------- Narrow screens ---------- */
 @media (max-width: 1100px) {
-  .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Detail panel stacks below the board on narrow screens. */
+  .board-wrap { flex-direction: column; }
+  .detail-panel { flex: 0 0 auto; width: 100%; position: static; max-height: none; }
+  .chat-messages { max-height: 380px; }
 }
 @media (max-width: 640px) {
-  .board { grid-template-columns: 1fr; padding: 16px; }
+  #board { grid-template-columns: 1fr; }
   .topbar { padding: 16px 16px 10px; }
-  .topbar-right { text-align: left; }
+  .layout { padding: 0 16px; }
+  .field-token input { width: 100%; }
+}
+
+/* ---------- Agent profile + ban (T-018) ---------- */
+.agent-summary {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.agent-portfolio {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.agent-portfolio li {
+  margin-bottom: 8px;
+  overflow-wrap: break-word;
+}
+
+.portfolio-empty {
+  color: #666;
+  list-style: none;
+}
+
+.agent-banned {
+  font-size: 14px;
+  color: #b91c1c;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.agent-ban {
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.agent-ban h4 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.agent-note {
+  font-size: 13px;
+  color: #666;
+  margin: 12px 0 0;
+}
+
+.badge-red {
+  background: #fee2e2;
+  color: #b91c1c;
 }

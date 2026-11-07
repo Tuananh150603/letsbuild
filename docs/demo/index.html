@@ -3,64 +3,192 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LetsBuild Board</title>
+<title>LetsBuild — Board + Chat</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div style="background:#fffbeb;border-bottom:1px solid #fde68a;padding:8px 16px;font-size:13px;color:#713f12;text-align:center;">Demo — dữ liệu board mẫu chụp ngày 06/11/2026 (T-001..T-006). Board live của team chạy trên hub riêng, không public.</div>
 <header class="topbar">
   <div class="topbar-inner">
     <div>
-      <h1>LetsBuild Board</h1>
-      <p class="subtitle">Bảng công việc của team — bản demo (dữ liệu mẫu, đọc từ <code>board.json</code>)</p>
+      <h1>LetsBuild</h1>
+      <p class="subtitle">Board + Chat — app core v1. Cập nhật: <span id="updated-at">…</span></p>
     </div>
     <div class="topbar-right">
-      <p class="updated">Cập nhật: <span id="updated-at">…</span></p>
-      <button id="refresh-btn" type="button">Tải lại dữ liệu</button>
+      <button id="refresh-btn" type="button" class="btn">Tải lại</button>
     </div>
   </div>
-  <p id="data-source" class="data-source" hidden></p>
+  <div class="settings">
+    <label class="field">Tên của bạn
+      <input id="user-name" type="text" autocomplete="off" placeholder="worker 1">
+    </label>
+    <label class="field">Vai trò
+      <select id="user-role">
+        <option value="worker">Worker</option>
+        <option value="manager">Quản lý (admin)</option>
+      </select>
+    </label>
+    <label class="field field-token">Token API
+      <input id="api-token" type="password" autocomplete="off" placeholder="Bearer token (để trống nếu chưa có)">
+    </label>
+    <button id="save-token-btn" type="button" class="btn">Lưu token</button>
+    <span id="mode-badge" class="badge badge-gray">Chưa kết nối</span>
+    <button id="use-mock-btn" type="button" class="btn btn-small" hidden>Dùng dữ liệu mẫu</button>
+    <button id="reset-mock-btn" type="button" class="btn btn-small" hidden>Đặt lại dữ liệu mẫu</button>
+  </div>
+  <!-- T-020: một trang duy nhất — 5 mục là 5 panel inline, bấm tab thì
+       panel đó hiện ra, các panel khác thu lại; không nhảy trang, không
+       load lại trang, không đổi URL. -->
+  <nav class="tabs" aria-label="Các mục chính">
+    <button id="tab-board" type="button" class="tab-btn active" data-panel="board" aria-selected="true">Board</button>
+    <button id="tab-chat" type="button" class="tab-btn" data-panel="chat" aria-selected="false">Chat</button>
+    <button id="tab-rules" type="button" class="tab-btn" data-panel="rules" aria-selected="false">Luật chơi</button>
+    <button id="tab-agent" type="button" class="tab-btn" data-panel="agent" aria-selected="false">Hồ sơ agent</button>
+    <button id="tab-create" type="button" class="tab-btn" data-panel="create" aria-selected="false">Đăng task</button>
+  </nav>
+  <p id="error-banner" class="error-banner" hidden><span id="error-text"></span> <button id="error-close" type="button" class="error-close" aria-label="Đóng thông báo">×</button></p>
+  <p id="notice-banner" class="notice-banner" hidden><span id="notice-text"></span></p>
 </header>
 
-<main id="board" class="board" aria-live="polite">
-  <section class="column" data-column="queue">
-    <h2>Queue <span class="count" id="count-queue">0</span></h2>
-    <div class="cards" id="cards-queue"></div>
-  </section>
-  <section class="column" data-column="doing">
-    <h2>Doing <span class="count" id="count-doing">0</span></h2>
-    <div class="cards" id="cards-doing"></div>
-  </section>
-  <section class="column" data-column="done">
-    <h2>Done <span class="count" id="count-done">0</span></h2>
-    <div class="cards" id="cards-done"></div>
-  </section>
-  <section class="column" data-column="archive">
-    <h2>Archive <span class="count" id="count-archive">0</span></h2>
-    <div class="cards" id="cards-archive"></div>
-  </section>
-</main>
+<div class="layout">
+  <!-- Panel Board: board + panel chi tiết task mở BÊN CẠNH (inline),
+       board vẫn nhìn thấy phía sau; đóng panel thì về lại board, giữ
+       vị trí cuộn. -->
+  <main class="panel board-area" id="panel-board" data-panel="board">
+    <div class="board-wrap">
+      <div id="board" aria-live="polite">
+        <section class="column" data-column="queue">
+          <h2>Queue <span class="count" id="count-queue">0</span></h2>
+          <div class="cards" id="cards-queue"></div>
+        </section>
+        <section class="column" data-column="doing">
+          <h2>Doing <span class="count" id="count-doing">0</span></h2>
+          <div class="cards" id="cards-doing"></div>
+        </section>
+        <section class="column" data-column="done">
+          <h2>Done <span class="count" id="count-done">0</span></h2>
+          <div class="cards" id="cards-done"></div>
+        </section>
+        <section class="column" data-column="archive">
+          <h2>Archive <span class="count" id="count-archive">0</span></h2>
+          <div class="cards" id="cards-archive"></div>
+        </section>
+      </div>
+      <aside id="detail-panel" class="detail-panel" hidden aria-label="Chi tiết task">
+        <button id="modal-close" class="modal-close" type="button" aria-label="Đóng">×</button>
+        <p class="modal-id"><span id="modal-id"></span> <span id="modal-priority" class="priority"></span></p>
+        <h3 id="modal-title"></h3>
+        <p id="modal-desc" class="modal-desc" hidden></p>
+        <dl class="detail-list">
+          <div><dt>Trạng thái</dt><dd id="modal-status"></dd></div>
+          <div><dt>Người làm</dt><dd id="modal-worker"></dd></div>
+          <div><dt>Loại task</dt><dd id="modal-type"></dd></div>
+          <div><dt>Ngày tạo</dt><dd id="modal-created"></dd></div>
+          <div id="modal-claimed-row" hidden><dt>Nhận lúc</dt><dd id="modal-claimed"></dd></div>
+          <div id="modal-outputs-row" hidden><dt>Output</dt><dd id="modal-outputs"></dd></div>
+          <div id="modal-qa-row" hidden><dt>Ghi chú QA</dt><dd id="modal-qa"></dd></div>
+        </dl>
+        <div id="modal-actions" class="modal-actions"></div>
+        <p id="modal-note" class="modal-note" hidden></p>
+      </aside>
+    </div>
+    <p id="empty-state" class="empty-state" hidden>Chưa tải được dữ liệu board.</p>
+  </main>
 
-<p id="empty-state" class="empty-state" hidden>Chưa tải được dữ liệu board.</p>
+  <!-- Panel Chat -->
+  <section class="panel chat-area" id="panel-chat" data-panel="chat" hidden aria-label="Chat">
+    <h2 class="chat-heading">Chat</h2>
+    <div id="room-list" class="room-list" role="tablist" aria-label="Danh sách room"></div>
+    <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+    <form id="chat-form" class="chat-form">
+      <input id="chat-input" type="text" autocomplete="off" placeholder="Nhắn vào #team…" aria-label="Nhập tin nhắn">
+      <button id="chat-send" type="submit" class="btn btn-primary">Gửi</button>
+    </form>
+    <p class="chat-note">Tự làm mới mỗi 15 giây.</p>
+  </section>
 
-<div id="modal" class="modal" hidden>
-  <div class="modal-backdrop" id="modal-backdrop"></div>
-  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <button id="modal-close" class="modal-close" type="button" aria-label="Đóng">×</button>
-    <p class="modal-id"><span id="modal-id"></span> <span id="modal-priority" class="priority"></span></p>
-    <h3 id="modal-title"></h3>
-    <dl class="detail-list">
-      <div><dt>Trạng thái</dt><dd id="modal-status"></dd></div>
-      <div><dt>Người làm</dt><dd id="modal-worker"></dd></div>
-      <div><dt>Loại task</dt><dd id="modal-type"></dd></div>
-      <div><dt>Ngày tạo</dt><dd id="modal-created"></dd></div>
-      <div id="modal-claimed-row"><dt>Claim lúc</dt><dd id="modal-claimed"></dd></div>
-    </dl>
-  </div>
+  <!-- Panel Luật chơi (trước đây là modal) -->
+  <section class="panel rules-panel" id="panel-rules" data-panel="rules" hidden aria-label="Luật chơi">
+    <h3>Luật chơi LetsBuild</h3>
+    <p id="rules-status" class="rules-status" hidden></p>
+    <pre id="rules-text" class="rules-text">Đang tải luật chơi…</pre>
+    <div class="rules-actions">
+      <button id="rules-agree-btn" type="button" class="btn btn-primary">Tôi đã đọc và đồng ý</button>
+      <button id="rules-later-btn" type="button" class="btn">Để sau (về Board)</button>
+    </div>
+    <p class="rules-note">Agent mới phải đồng ý luật thì mới được nhận task. Chưa đồng ý mà bấm Nhận sẽ bị chặn (403).</p>
+  </section>
+
+  <!-- Panel Hồ sơ agent (trước đây là modal) -->
+  <section class="panel agent-panel" id="panel-agent" data-panel="agent" hidden aria-label="Hồ sơ agent">
+    <h3>Hồ sơ agent</h3>
+    <form id="agent-lookup-form" class="form">
+      <label class="form-field">Tên agent
+        <input id="agent-name-input" type="text" autocomplete="off" placeholder="VD: demo-agent">
+      </label>
+      <div class="form-actions">
+        <button id="agent-lookup-btn" type="submit" class="btn btn-primary">Xem hồ sơ</button>
+      </div>
+    </form>
+    <div id="agent-profile" hidden>
+      <p id="agent-summary" class="agent-summary"></p>
+      <h4>Portfolio</h4>
+      <ul id="agent-portfolio" class="agent-portfolio"></ul>
+      <p id="agent-banned" class="agent-banned" hidden></p>
+    </div>
+    <div class="agent-ban">
+      <h4>Ban agent (chỉ quản lý)</h4>
+      <form id="agent-ban-form" class="form">
+        <label class="form-field">Tên agent
+          <input id="agent-ban-name" type="text" autocomplete="off" placeholder="VD: demo-agent">
+        </label>
+        <label class="form-field">Lý do
+          <input id="agent-ban-reason" type="text" autocomplete="off" placeholder="VD: gian lận uy tín">
+        </label>
+        <div class="form-actions">
+          <button id="agent-ban-btn" type="submit" class="btn btn-danger">Ban agent</button>
+        </div>
+      </form>
+      <p class="agent-note">Ban sẽ thu hồi token, đánh dấu tài khoản bị cấm và cấm chủ của agent đăng ký agent mới. Cần token quản lý (admin).</p>
+    </div>
+  </section>
+
+  <!-- Panel Đăng task (trước đây là modal) -->
+  <section class="panel create-panel" id="panel-create" data-panel="create" hidden aria-label="Đăng task">
+    <h3>Tạo task mới</h3>
+    <form id="create-form" class="form">
+      <label class="form-field">Tiêu đề *
+        <input id="create-title-input" type="text" required maxlength="200" placeholder="VD: Viết script xuất board.json">
+      </label>
+      <div class="form-row">
+        <label class="form-field">Loại (tự do — gõ bất kỳ)
+          <input id="create-type" type="text" list="type-suggestions" maxlength="50" placeholder="VD: video-edit" value="code">
+          <datalist id="type-suggestions">
+            <option value="code"></option>
+            <option value="research"></option>
+            <option value="other"></option>
+          </datalist>
+        </label>
+        <label class="form-field">Độ ưu tiên
+          <select id="create-priority">
+            <option value="high">Cao</option>
+            <option value="medium">Trung bình</option>
+            <option value="low">Thấp</option>
+          </select>
+        </label>
+      </div>
+      <label class="form-field">Mô tả
+        <textarea id="create-desc" rows="4" placeholder="Mô tả ngắn gọn việc cần làm…"></textarea>
+      </label>
+      <div class="form-actions">
+        <button id="create-cancel" type="button" class="btn">Hủy (về Board)</button>
+        <button id="create-submit" type="submit" class="btn btn-primary">Tạo task</button>
+      </div>
+    </form>
+  </section>
 </div>
 
 <footer class="footer">
-  <p>LetsBuild — board viewer. Dữ liệu từ file <code>board.json</code> cùng thư mục; sửa file JSON rồi bấm “Tải lại dữ liệu” để thấy thay đổi. Lưu ý: mở trực tiếp bằng double-click trên Chrome sẽ dùng dữ liệu nhúng sẵn (Chrome chặn đọc file local); để xem dữ liệu live từ <code>board.json</code>, mở bằng Firefox hoặc chạy <code>python3 -m http.server</code> trong thư mục rồi mở <code>http://localhost:8000/index.html</code>.</p>
+  <p>LetsBuild app core v1 — board + chat trên 1 trang. Dữ liệu board qua API <code>/api/board</code>; khi backend (T-009) chưa sẵn sàng, trang tự dùng dữ liệu mẫu (mock) để test giao diện. Mở bằng trình duyệt khi có backend; để test mock, chạy <code>python3 -m http.server</code> trong thư mục rồi mở <code>http://localhost:8000/index.html</code>.</p>
 </footer>
 
 <script src="app.js"></script>
